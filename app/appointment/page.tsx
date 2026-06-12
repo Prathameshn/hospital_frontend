@@ -1,6 +1,7 @@
 "use client";
-
-import { useState } from "react";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import { SetStateAction, useState } from "react";
 
 const doctors = [
   {
@@ -28,7 +29,7 @@ const slots = [
 
 export default function AppointmentPage() {
   const [doctor, setDoctor] = useState(doctors[0]);
-  const [date, setDate] = useState("");
+  const [date, setDate] = useState<Date | null>(new Date());
   const [slot, setSlot] = useState("");
   const [showModal, setShowModal] = useState(false);
 
@@ -55,13 +56,11 @@ export default function AppointmentPage() {
   return (
     <div className="min-h-screen bg-gray-50 py-12 px-4">
       <div className="max-w-4xl mx-auto">
-
         <h1 className="text-4xl font-bold text-center mb-10">
           Book Appointment
         </h1>
 
         <div className="bg-white rounded-2xl shadow-lg p-8">
-
           {/* Doctor */}
           <div className="mb-8">
             <h2 className="font-semibold mb-4">Select Doctor</h2>
@@ -72,9 +71,7 @@ export default function AppointmentPage() {
                   key={doc.id}
                   onClick={() => setDoctor(doc)}
                   className={`cursor-pointer border rounded-xl p-4 ${
-                    doctor.id === doc.id
-                      ? "border-blue-600 bg-blue-50"
-                      : ""
+                    doctor.id === doc.id ? "border-blue-600 bg-blue-50" : ""
                   }`}
                 >
                   <div className="flex gap-4 items-center">
@@ -86,9 +83,7 @@ export default function AppointmentPage() {
 
                     <div>
                       <h3 className="font-bold">{doc.name}</h3>
-                      <p className="text-gray-500">
-                        {doc.specialization}
-                      </p>
+                      <p className="text-gray-500">{doc.specialization}</p>
                     </div>
                   </div>
                 </div>
@@ -97,24 +92,28 @@ export default function AppointmentPage() {
           </div>
 
           {/* Date */}
-          <div className="mb-8">
-            <label className="font-semibold block mb-2">
-              Select Date
-            </label>
+          <div className="mb-8 w-full">
+            <label className="font-semibold block mb-2">Select Date</label>
 
-            <input
-              type="date"
+            <DatePicker
+              selected={date}
+              onChange={(selectedDate: SetStateAction<Date | null>) =>
+                setDate(selectedDate)
+              }
+              dateFormat="dd/MM/yyyy"
+              minDate={new Date()}
+              placeholderText="Select a date"
               className="border p-3 rounded-lg w-full"
-              value={date}
-              onChange={(e) => setDate(e.target.value)}
+              wrapperClassName="w-full"
+              isClearable
+              showMonthDropdown
+              showYearDropdown
             />
           </div>
 
           {/* Slots */}
           <div className="mb-8">
-            <h2 className="font-semibold mb-4">
-              Available Slots
-            </h2>
+            <h2 className="font-semibold mb-4">Available Slots</h2>
 
             <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
               {slots.map((s) => (
@@ -122,9 +121,7 @@ export default function AppointmentPage() {
                   key={s}
                   onClick={() => setSlot(s)}
                   className={`p-3 rounded-lg border ${
-                    slot === s
-                      ? "bg-blue-600 text-white"
-                      : ""
+                    slot === s ? "bg-blue-600 text-white" : ""
                   }`}
                 >
                   {s}
@@ -136,16 +133,14 @@ export default function AppointmentPage() {
           {/* Booking Summary */}
           {date && slot && (
             <div className="bg-blue-50 rounded-xl p-5 mb-6">
-              <h3 className="font-bold text-lg mb-3">
-                Booking Summary
-              </h3>
+              <h3 className="font-bold text-lg mb-3">Booking Summary</h3>
 
               <p>
                 <strong>Doctor:</strong> {doctor.name}
               </p>
 
               <p>
-                <strong>Date:</strong> {date}
+                <strong>Date:</strong> {date.toDateString()}
               </p>
 
               <p>
@@ -167,15 +162,10 @@ export default function AppointmentPage() {
       {/* Modal */}
       {showModal && (
         <div className="fixed inset-0 bg-black/50 flex justify-center items-center px-4 z-50">
-
           <div className="bg-white rounded-2xl p-8 w-full max-w-md">
-
-            <h2 className="text-2xl font-bold mb-6">
-              Patient Details
-            </h2>
+            <h2 className="text-2xl font-bold mb-6">Patient Details</h2>
 
             <div className="space-y-4">
-
               <input
                 placeholder="First Name"
                 className="border p-3 rounded-lg w-full"
@@ -223,7 +213,6 @@ export default function AppointmentPage() {
             </div>
 
             <div className="flex gap-3 mt-6">
-
               <button
                 onClick={() => setShowModal(false)}
                 className="flex-1 border py-3 rounded-lg"
@@ -237,7 +226,6 @@ export default function AppointmentPage() {
               >
                 Confirm Booking
               </button>
-
             </div>
           </div>
         </div>

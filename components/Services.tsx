@@ -25,9 +25,7 @@ export default function Services() {
   return (
     <section className="py-20 bg-gray-50" id="services">
       <div className="max-w-7xl mx-auto px-6">
-        <h2 className="text-4xl font-bold text-center mb-4">
-          Our Services
-        </h2>
+        <h2 className="text-4xl font-bold text-center mb-4">Our Services</h2>
 
         <p className="text-center text-gray-500 mb-12">
           Comprehensive healthcare services for your family.
@@ -41,13 +39,9 @@ export default function Services() {
             >
               <div className="text-5xl mb-4">{service.icon}</div>
 
-              <h3 className="text-xl font-bold mb-2">
-                {service.title}
-              </h3>
+              <h3 className="text-xl font-bold mb-2">{service.title}</h3>
 
-              <p className="text-gray-500">
-                {service.description}
-              </p>
+              <p className="text-gray-500">{service.description}</p>
             </div>
           ))}
         </div>

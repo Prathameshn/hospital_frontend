@@ -2,17 +2,11 @@ export default function EmergencyBanner() {
   return (
     <section className="bg-red-600 text-white py-10">
       <div className="max-w-7xl mx-auto px-6">
-
         <div className="flex flex-col lg:flex-row items-center justify-between gap-6">
-
           <div>
-            <h2 className="text-3xl font-bold">
-              24/7 Emergency Services
-            </h2>
+            <h2 className="text-3xl font-bold">24/7 Emergency Services</h2>
 
-            <p>
-              Immediate medical assistance available anytime.
-            </p>
+            <p>Immediate medical assistance available anytime.</p>
           </div>
 
           <a
@@ -21,9 +15,7 @@ export default function EmergencyBanner() {
           >
             Call Now
           </a>
-
         </div>
-
       </div>
     </section>
   );
