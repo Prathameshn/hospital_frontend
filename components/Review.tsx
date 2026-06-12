@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 
-export default function Feedback() {
+export default function Review() {
   const [feedbackObj, setFeedbackObj] = useState({
     name: "",
     email: "",
@@ -47,10 +47,10 @@ export default function Feedback() {
   }, []);
 
   return (
-    <section id="feedback" className="py-16 bg-gray-50">
+    <section id="reviews" className="py-20 scroll-mt-24">
       <div className="max-w-7xl mx-auto px-4">
         <h2 className="text-3xl font-bold text-center mb-8">
-          Your Feedback/Suggestions valuable for us
+          Please Share Your Experience
         </h2>
         <div className="rounded-xl overflow-hidden shadow-lg">
           <form className="bg-white p-8 rounded-2xl shadow-lg">

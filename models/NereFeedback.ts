@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const FeedbackSchema = new mongoose.Schema(
+const NereFeedbackSchema = new mongoose.Schema(
   {
     name: String,
     email: String,
@@ -16,5 +16,5 @@ const FeedbackSchema = new mongoose.Schema(
   },
 );
 
-export default mongoose.models.Feedback ||
-  mongoose.model("Feedback", FeedbackSchema);
+export default mongoose.models.NereFeedback ||
+  mongoose.model("NereFeedback", NereFeedbackSchema);

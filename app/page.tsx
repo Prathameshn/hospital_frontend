@@ -5,7 +5,7 @@ import EmergencyBanner from "@/components/EmergencyBanner";
 import FAQ from "@/components/FAQ";
 import Main from "@/components/main";
 import Contact from "@/components/Contact";
-import Feedback from "@/components/Feedback";
+import Review from "@/components/Review";
 
 export default function Home() {
   return (
@@ -16,7 +16,7 @@ export default function Home() {
       <Testimonials />
       <EmergencyBanner />
       <FAQ />
-      <Feedback />
+      <Review />
       <Contact />
     </>
   );

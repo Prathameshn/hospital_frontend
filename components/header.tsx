@@ -1,11 +1,12 @@
 "use client";
 
 import { useEffect, useState } from "react";
-
+import { Menu, X } from "lucide-react";
 import Link from "next/link";
 
 export default function Header() {
   const [showButton, setShowButton] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -35,14 +36,65 @@ export default function Header() {
           <Link href="/#services">Services</Link>
           <Link href="/#testimonials">Testimonials</Link>
           <Link href="/#faq">FAQ</Link>
-          <Link href="/#feedback">Feedback</Link>
+          <Link href="/#reviews">Reviews</Link>
           <Link href="/#contact">Contact us</Link>
         </nav>
 
+        {/* Mobile Hamburger */}
+        <button
+          className="md:hidden text-2xl"
+          onClick={() => setIsOpen(!isOpen)}
+        >
+          {isOpen ? <X /> : <Menu />}
+        </button>
+
+        {/* Mobile Dropdown */}
+        {isOpen && (
+          <div className="md:hidden bg-white border-t shadow-lg">
+            <nav className="flex flex-col p-4 space-y-4">
+              <Link href="/#home" onClick={() => setIsOpen(false)}>
+                Home
+              </Link>
+
+              <Link href="/#services" onClick={() => setIsOpen(false)}>
+                Services
+              </Link>
+
+              <Link href="/#testimonials" onClick={() => setIsOpen(false)}>
+                Testimonials
+              </Link>
+
+              <Link href="/#faq" onClick={() => setIsOpen(false)}>
+                FAQ
+              </Link>
+
+              <Link href="/#reviews" onClick={() => setIsOpen(false)}>
+                Reviews
+              </Link>
+
+              <Link href="/#contact" onClick={() => setIsOpen(false)}>
+                Contact Us
+              </Link>
+              <Link
+                href="/appointment"
+                onClick={() => setIsOpen(false)}
+                className="bg-blue-600 text-white px-4 py-2 rounded-lg text-center"
+              >
+                Book Appointment
+              </Link>
+            </nav>
+          </div>
+        )}
+
         {showButton && (
-          <button className="bg-blue-600 text-white px-6 py-3 rounded-lg">
-            Book Appointment
-          </button>
+          <div className="hidden md:block">
+            <Link
+              href="/appointment"
+              className="bg-blue-600 text-white px-6 py-3 rounded-lg"
+            >
+              Book Appointment
+            </Link>
+          </div>
         )}
       </div>
     </header>
