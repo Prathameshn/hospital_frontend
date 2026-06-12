@@ -1,21 +1,22 @@
-import Header from "@/components/header";
 import Services from "@/components/Services";
-import TopDoctors from "@/components/TopDoctors";
+// import TopDoctors from "@/components/TopDoctors";
 import Testimonials from "@/components/Testimonials";
 import EmergencyBanner from "@/components/EmergencyBanner";
 import FAQ from "@/components/FAQ";
 import Main from "@/components/main";
 import Contact from "@/components/Contact";
+import Feedback from "@/components/Feedback";
 
 export default function Home() {
   return (
     <>
       <Main />
       <Services />
-      <TopDoctors />
+      {/* <TopDoctors /> */}
       <Testimonials />
       <EmergencyBanner />
       <FAQ />
+      <Feedback />
       <Contact />
     </>
   );

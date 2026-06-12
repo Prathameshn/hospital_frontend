@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { connectDB } from "@/lib/mongodb";
 import Feedback from "@/models/Feedback";
+import { bootstrap } from "@/lib/bootstrap";
 
 export async function POST(req: Request) {
   try {
@@ -26,4 +27,10 @@ export async function POST(req: Request) {
       { status: 500 },
     );
   }
+}
+
+export async function GET() {
+  await bootstrap();
+
+  return Response.json({ success: true });
 }

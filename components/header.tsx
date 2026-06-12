@@ -31,11 +31,12 @@ export default function Header() {
         </div>
         <nav className="hidden md:flex gap-8">
           <Link href="/#home">Home</Link>
-          <Link href="/#doctors">Doctors</Link>
+          {/* <Link href="/#doctors">Doctors</Link> */}
           <Link href="/#services">Services</Link>
           <Link href="/#testimonials">Testimonials</Link>
           <Link href="/#faq">FAQ</Link>
-          <Link href="/#contact">Contact</Link>
+          <Link href="/#feedback">Feedback</Link>
+          <Link href="/#contact">Contact us</Link>
         </nav>
 
         {showButton && (
