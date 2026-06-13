@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { connectDB } from "@/lib/mongodb";
-import Feedback from "@/models/Feedback";
+import NereFeedback from "@/models/NereFeedback";
 import { bootstrap } from "@/lib/bootstrap";
 
 export async function POST(req: Request) {
@@ -9,12 +9,12 @@ export async function POST(req: Request) {
 
     const body = await req.json();
 
-    const feedback = await Feedback.create(body);
+    const Nerefeedback = await NereFeedback.create(body);
 
     return NextResponse.json(
       {
         success: true,
-        data: feedback,
+        data: Nerefeedback,
       },
       { status: 201 },
     );
