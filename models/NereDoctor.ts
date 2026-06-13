@@ -5,7 +5,7 @@ const NereDoctorSchema = new mongoose.Schema(
     name: { type: String, required: true },
     email: { type: String, required: true, unique: true },
     mobile: { type: String, required: true },
-    specialization: { type: String, required: true },
+    specialization: { type: [String], required: true },
     experience: { type: Number, required: true },
     dob: { type: Date },
     eachSlotDuration: { type: Number, required: true, default: 20 },
@@ -36,11 +36,13 @@ const NereDoctorSchema = new mongoose.Schema(
     qualifications: [String],
     awards: [String],
     about: String,
-    cunsultationFee: { type: Number, default: 0 },
+    consultationFee: { type: Number, default: 0 },
     registrationNumber: {
       type: String,
       unique: true,
     },
+    isMainDoctor: { type: Boolean, default: false },
+    isActive: { type: Boolean, default: true },
   },
   {
     timestamps: true,

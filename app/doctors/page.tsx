@@ -1,19 +1,34 @@
 "use client";
 
-import { DoctorModal } from "@/components/DoctorModel";
-import { useState } from "react";
+import { DoctorForm, DoctorModal } from "@/components/DoctorModel";
+import { useEffect, useState } from "react";
+import { fetchDoctors } from "@/store/slices/doctorSlice";
+import { useAppDispatch, useAppSelector } from "@/store/hook";
 
 export default function DoctorsPage() {
   const [showModal, setShowModal] = useState(false);
+  const dispatch = useAppDispatch();
+  const { doctors, loading, error } = useAppSelector((state) => state.doctor);
+  const [selectedDoctor, setSelectedDoctor] = useState<DoctorForm | undefined>(
+    undefined,
+  );
 
-  const doctors = [
-    {
-      _id: "1",
-      name: "Dr. John",
-      specialization: "Cardiology",
-      experience: 10,
-    },
-  ];
+  useEffect(() => {
+    dispatch(fetchDoctors());
+  }, [dispatch]);
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div>Error: {error}</div>;
+  }
+
+  const handleEdit = (doctor: DoctorForm) => {
+    setSelectedDoctor(doctor);
+    setShowModal(true);
+  };
 
   return (
     <div className="p-8">
@@ -40,7 +55,7 @@ export default function DoctorsPage() {
           </thead>
 
           <tbody>
-            {doctors.map((doctor) => (
+            {doctors.data.map((doctor) => (
               <tr key={doctor._id}>
                 <td className="p-4">{doctor.name}</td>
 
@@ -50,7 +65,7 @@ export default function DoctorsPage() {
 
                 <td className="p-4">
                   <button
-                    onClick={() => setShowModal(true)}
+                    onClick={() => handleEdit(doctor)}
                     className="bg-green-600 text-white px-3 py-1 rounded"
                   >
                     Edit
@@ -62,7 +77,12 @@ export default function DoctorsPage() {
         </table>
       </div>
 
-      {showModal && <DoctorModal onClose={() => setShowModal(false)} />}
+      {showModal && (
+        <DoctorModal
+          onClose={() => setShowModal(false)}
+          doctor={selectedDoctor}
+        />
+      )}
     </div>
   );
 }

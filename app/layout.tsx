@@ -1,6 +1,7 @@
 import Header from "@/components/header";
 import Footer from "@/components/Footer";
 import "./globals.css";
+import ReduxProvider from "@/store/provider";
 
 export default function RootLayout({
   children,
@@ -10,11 +11,13 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <Header />
+        <ReduxProvider>
+          <Header />
 
-        <main className="pt-20">{children}</main>
+          <main className="pt-20">{children}</main>
 
-        <Footer />
+          <Footer />
+        </ReduxProvider>
       </body>
     </html>
   );
