@@ -18,7 +18,11 @@ export default function DoctorsPage() {
   }, [dispatch]);
 
   if (loading) {
-    return <div>Loading...</div>;
+    return (
+      <div className="flex justify-center py-8">
+        <div className="w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin" />
+      </div>
+    );
   }
 
   if (error) {
@@ -47,7 +51,8 @@ export default function DoctorsPage() {
         </button>
       </div>
 
-      <div className="bg-white rounded-xl shadow overflow-hidden">
+      {/* Desktop Table */}
+      <div className="hidden md:block bg-white rounded-xl shadow overflow-hidden">
         <table className="w-full">
           <thead>
             <tr className="bg-gray-100">
@@ -62,11 +67,8 @@ export default function DoctorsPage() {
             {doctors.data.map((doctor) => (
               <tr key={doctor._id}>
                 <td className="p-4">{doctor.name}</td>
-
                 <td className="p-4">{doctor.specialization}</td>
-
                 <td className="p-4">{doctor.experience} Years</td>
-
                 <td className="p-4">
                   <button
                     onClick={() => handleEdit(doctor)}
@@ -79,6 +81,30 @@ export default function DoctorsPage() {
             ))}
           </tbody>
         </table>
+      </div>
+
+      {/* Mobile Cards */}
+      <div className="md:hidden space-y-4">
+        {doctors.data.map((doctor) => (
+          <div key={doctor._id} className="bg-white rounded-xl shadow p-4">
+            <h3 className="font-semibold text-lg">{doctor.name}</h3>
+
+            <p className="text-gray-600 mt-2">
+              <strong>Specialization:</strong> {doctor.specialization}
+            </p>
+
+            <p className="text-gray-600">
+              <strong>Experience:</strong> {doctor.experience} Years
+            </p>
+
+            <button
+              onClick={() => handleEdit(doctor)}
+              className="mt-4 bg-green-600 text-white px-4 py-2 rounded-lg w-full"
+            >
+              Edit
+            </button>
+          </div>
+        ))}
       </div>
 
       {showModal && (

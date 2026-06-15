@@ -1,23 +1,29 @@
 "use client";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import { SetStateAction, useEffect, useState } from "react";
+import { SetStateAction, useEffect, useState, useRef } from "react";
 import { useAppDispatch, useAppSelector } from "@/store/hook";
 import { fetchDoctors, setDoctor } from "@/store/slices/doctorSlice";
+import { DoctorForm } from "@/components/DoctorModel";
 
 export default function AppointmentPage() {
+  const confirmationRef = useRef<HTMLDivElement>(null);
+
   const dispatch = useAppDispatch();
-  const { doctor, doctors, loading, error } = useAppSelector(
-    (state) => state.doctor,
-  );
+  const { doctor, doctors } = useAppSelector((state) => state.doctor);
   const [date, setDate] = useState<Date | null>(new Date());
-  const [slot, setSlot] = useState({ start: "", end: "", isBooked: false });
+  const [slot, setSlot] = useState<{
+    start: string;
+    end: string;
+    isBooked: boolean;
+  }>({ start: "", end: "", isBooked: false });
   const [slots, setSlots] = useState<
     { start: string; end: string; isBooked: boolean }[]
   >([]);
   const [showModal, setShowModal] = useState(false);
 
   const fetchSlotsForDate = async (selectedDate: Date | null) => {
+    if (!doctor || !selectedDate) return;
     const response = await fetch(
       `/api/doctors/${doctor?._id}/slots?date=${selectedDate?.toISOString()}`,
       {
@@ -48,9 +54,10 @@ export default function AppointmentPage() {
         const slots = await fetchSlotsForDate(date);
         setSlots(slots || []);
         setSlot(
-          slots && slots.length > 0
-            ? slots[0]
-            : { start: "", end: "", isBooked: true },
+          slots &&
+            slots.map((s: { isBooked: boolean }) => s.isBooked).includes(false)
+            ? slots.find((s: { isBooked: boolean }) => !s.isBooked)
+            : { start: "", end: "", isBooked: false },
         );
       };
       fetchSlots();
@@ -65,19 +72,45 @@ export default function AppointmentPage() {
   });
 
   const handleBooking = () => {
-    console.log({
-      doctor,
-      date,
-      slot,
-      patient: form,
-    });
+    const body = {
+      patientDetails: form,
+      appointmentDate: date,
+      appointmentTime: { startTime: slot.start, endTime: slot.end },
+      notes: "",
+    };
 
-    alert("Appointment Booked Successfully");
+    async function bookAppointment() {
+      const response = await fetch(
+        `/api/doctors/${doctor?._id}/bookappointment`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(body),
+        },
+      );
 
-    setShowModal(false);
+      if (response.ok) {
+        const data = await response.json();
+        slots.forEach((s) => {
+          if (s.start === slot.start && s.end === slot.end) {
+            s.isBooked = true;
+          }
+        });
+        setSlots([...slots]);
+        alert("Appointment Booked Successfully");
+        setShowModal(false);
+      } else {
+        alert("Failed to book appointment");
+        setShowModal(false);
+      }
+    }
+
+    bookAppointment();
   };
 
-  const handleSelectDoctor = (doc: any) => {
+  const handleSelectDoctor = (doc: DoctorForm) => {
     dispatch(setDoctor(doc));
   };
 
@@ -85,6 +118,21 @@ export default function AppointmentPage() {
     selectedDate: SetStateAction<Date | null>,
   ) => {
     setDate(selectedDate);
+  };
+
+  const handleSlotSelect = (slot: {
+    start: string;
+    end: string;
+    isBooked: boolean;
+  }) => {
+    setSlot(slot);
+
+    setTimeout(() => {
+      confirmationRef.current?.scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+      });
+    }, 100);
   };
 
   return (
@@ -149,24 +197,45 @@ export default function AppointmentPage() {
           <div className="mb-8">
             <h2 className="font-semibold mb-4">Available Slots</h2>
 
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-              {slots.map((s) => (
-                <button
-                  key={s.start}
-                  onClick={() => setSlot(s)}
-                  className={`p-3 rounded-lg border ${
-                    slot === s ? "bg-blue-600 text-white" : ""
-                  }`}
-                >
-                  {s.start} - {s.end}
-                </button>
-              ))}
-            </div>
+            {slots.length === 0 ? (
+              <div>
+                <div className="flex justify-center py-8">
+                  <div className="w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin" />
+                </div>
+                <div className="flex justify-center py-8">
+                  <data className="text-gray-500">
+                    Please select a date to view available slots
+                  </data>
+                </div>
+              </div>
+            ) : (
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                {slots.map((s) => (
+                  <button
+                    key={s.start}
+                    onClick={() => handleSlotSelect(s)}
+                    disabled={s.isBooked}
+                    className={`p-3 rounded-lg border ${
+                      slot === s ? "bg-blue-600 text-white" : ""
+                    } ${
+                      slot !== s && s.isBooked
+                        ? "bg-gray-300 cursor-not-allowed"
+                        : "hover:bg-blue-100"
+                    }`}
+                  >
+                    {s.start} - {s.end}
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
 
           {/* Booking Summary */}
           {date && slot && (
-            <div className="bg-blue-50 rounded-xl p-5 mb-6">
+            <div
+              ref={confirmationRef}
+              className="bg-blue-50 rounded-xl p-5 mb-6"
+            >
               <h3 className="font-bold text-lg mb-3">Booking Summary</h3>
 
               <p>
