@@ -1,37 +1,61 @@
 "use client";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import { SetStateAction, useState } from "react";
-
-const doctors = [
-  {
-    id: 1,
-    name: "Dr. Atul Shirale",
-    specialization: "General Physician",
-    image: "/doctor.png",
-  },
-  {
-    id: 2,
-    name: "Dr. Priya Patil",
-    specialization: "Pediatrician",
-    image: "/doctor.png",
-  },
-];
-
-const slots = [
-  "09:00 AM",
-  "10:00 AM",
-  "11:00 AM",
-  "02:00 PM",
-  "03:00 PM",
-  "04:00 PM",
-];
+import { SetStateAction, useEffect, useState } from "react";
+import { useAppDispatch, useAppSelector } from "@/store/hook";
+import { fetchDoctors, setDoctor } from "@/store/slices/doctorSlice";
 
 export default function AppointmentPage() {
-  const [doctor, setDoctor] = useState(doctors[0]);
+  const dispatch = useAppDispatch();
+  const { doctor, doctors, loading, error } = useAppSelector(
+    (state) => state.doctor,
+  );
   const [date, setDate] = useState<Date | null>(new Date());
-  const [slot, setSlot] = useState("");
+  const [slot, setSlot] = useState({ start: "", end: "", isBooked: false });
+  const [slots, setSlots] = useState<
+    { start: string; end: string; isBooked: boolean }[]
+  >([]);
   const [showModal, setShowModal] = useState(false);
+
+  const fetchSlotsForDate = async (selectedDate: Date | null) => {
+    const response = await fetch(
+      `/api/doctors/${doctor?._id}/slots?date=${selectedDate?.toISOString()}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      },
+    );
+
+    if (response.ok) {
+      const data = await response.json();
+      console.log("Fetched Slots:", data);
+      return data.slots;
+    } else {
+      alert("Failed to fetch slots");
+    }
+    setSlot({ start: "", end: "", isBooked: false });
+  };
+
+  useEffect(() => {
+    dispatch(fetchDoctors());
+  }, [dispatch]);
+
+  useEffect(() => {
+    if (doctor) {
+      const fetchSlots = async () => {
+        const slots = await fetchSlotsForDate(date);
+        setSlots(slots || []);
+        setSlot(
+          slots && slots.length > 0
+            ? slots[0]
+            : { start: "", end: "", isBooked: true },
+        );
+      };
+      fetchSlots();
+    }
+  }, [doctor, date]);
 
   const [form, setForm] = useState({
     firstName: "",
@@ -53,6 +77,16 @@ export default function AppointmentPage() {
     setShowModal(false);
   };
 
+  const handleSelectDoctor = (doc: any) => {
+    dispatch(setDoctor(doc));
+  };
+
+  const handleSelectDate = async (
+    selectedDate: SetStateAction<Date | null>,
+  ) => {
+    setDate(selectedDate);
+  };
+
   return (
     <div className="min-h-screen bg-gray-50 py-12 px-4">
       <div className="max-w-4xl mx-auto">
@@ -66,12 +100,14 @@ export default function AppointmentPage() {
             <h2 className="font-semibold mb-4">Select Doctor</h2>
 
             <div className="grid md:grid-cols-2 gap-4">
-              {doctors.map((doc) => (
+              {doctors.data.map((doc) => (
                 <div
-                  key={doc.id}
-                  onClick={() => setDoctor(doc)}
+                  key={doc._id}
+                  onClick={() => handleSelectDoctor(doc)}
                   className={`cursor-pointer border rounded-xl p-4 ${
-                    doctor.id === doc.id ? "border-blue-600 bg-blue-50" : ""
+                    doctor && doctor._id === doc._id
+                      ? "border-blue-600 bg-blue-50"
+                      : ""
                   }`}
                 >
                   <div className="flex gap-4 items-center">
@@ -97,9 +133,7 @@ export default function AppointmentPage() {
 
             <DatePicker
               selected={date}
-              onChange={(selectedDate: SetStateAction<Date | null>) =>
-                setDate(selectedDate)
-              }
+              onChange={handleSelectDate}
               dateFormat="dd/MM/yyyy"
               minDate={new Date()}
               placeholderText="Select a date"
@@ -118,13 +152,13 @@ export default function AppointmentPage() {
             <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
               {slots.map((s) => (
                 <button
-                  key={s}
+                  key={s.start}
                   onClick={() => setSlot(s)}
                   className={`p-3 rounded-lg border ${
                     slot === s ? "bg-blue-600 text-white" : ""
                   }`}
                 >
-                  {s}
+                  {s.start} - {s.end}
                 </button>
               ))}
             </div>
@@ -136,15 +170,16 @@ export default function AppointmentPage() {
               <h3 className="font-bold text-lg mb-3">Booking Summary</h3>
 
               <p>
-                <strong>Doctor:</strong> {doctor.name}
+                <strong>Doctor:</strong> {doctor ? doctor.name : "N/A"}
               </p>
 
               <p>
-                <strong>Date:</strong> {date.toDateString()}
+                <strong>Date:</strong> {date ? date.toDateString() : "N/A"}
               </p>
 
               <p>
-                <strong>Time:</strong> {slot}
+                <strong>Time:</strong>{" "}
+                {slot ? `${slot.start} - ${slot.end}` : "N/A"}
               </p>
             </div>
           )}

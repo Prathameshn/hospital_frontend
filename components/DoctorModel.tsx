@@ -2,6 +2,7 @@ import Select from "react-select";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { useState } from "react";
+import { validateTimings } from "@/utils/validateTimes.utils";
 
 export interface DoctorForm {
   _id?: string;
@@ -26,10 +27,11 @@ export interface DoctorForm {
 
 type Props = {
   onClose: () => void;
+  onSave: () => void;
   doctor?: DoctorForm;
 };
 
-export function DoctorModal({ onClose, doctor }: Props) {
+export function DoctorModal({ onClose, onSave, doctor }: Props) {
   console.log("Received doctor data:", doctor);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
@@ -62,12 +64,20 @@ export function DoctorModal({ onClose, doctor }: Props) {
     registrationNumber: doctor?.registrationNumber || "",
   });
 
-  const onSave = async (e: { preventDefault: () => void }) => {
+  const handleSave = async (e: { preventDefault: () => void }) => {
     try {
       const isEdit = doctor?._id;
       e.preventDefault();
       setLoading(true);
       setMessage("");
+
+      const error = validateTimings(doctorForm.availableTimings);
+
+      if (error) {
+        setMessage(error);
+        setLoading(false);
+        return;
+      }
 
       const response = await fetch(
         isEdit ? `/api/doctors/${doctor._id}` : "/api/doctors",
@@ -86,7 +96,7 @@ export function DoctorModal({ onClose, doctor }: Props) {
 
       if (data.success) {
         setMessage("Doctor Details Submitted Successfully!");
-        onClose(); // Close the modal after submission
+        onSave(); // Call onSave callback after successful submission
       } else {
         setMessage("Failed to submit doctor details. Please try again.");
       }
@@ -374,7 +384,7 @@ export function DoctorModal({ onClose, doctor }: Props) {
           </button>
 
           <button
-            onClick={onSave}
+            onClick={handleSave}
             className="bg-blue-600 text-white px-6 py-2 rounded-lg"
           >
             {loading && (

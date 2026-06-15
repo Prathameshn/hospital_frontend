@@ -30,6 +30,10 @@ export default function DoctorsPage() {
     setShowModal(true);
   };
 
+  const refreshDoctors = () => {
+    dispatch(fetchDoctors());
+  };
+
   return (
     <div className="p-8">
       <div className="flex justify-between items-center mb-6">
@@ -80,6 +84,11 @@ export default function DoctorsPage() {
       {showModal && (
         <DoctorModal
           onClose={() => setShowModal(false)}
+          onSave={() => {
+            setShowModal(false);
+            refreshDoctors();
+            setSelectedDoctor(undefined);
+          }}
           doctor={selectedDoctor}
         />
       )}
