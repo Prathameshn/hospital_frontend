@@ -20,8 +20,11 @@ export default function Header() {
 
   return (
     <header className="fixed top-0 w-full bg-white shadow z-50">
-      <div className="max-w-7xl mx-auto flex justify-between items-center px-6 py-4">
-        <div className="flex items-center gap-3">
+      <div className="max-w-7xl mx-auto flex justify-between items-center px-6 py-4 cursor-pointer">
+        <div
+          className="flex items-center gap-3"
+          onClick={() => (window.location.href = "/#home")}
+        >
           <img
             src="/NereHospitallogo.png"
             alt="Nere Hospital Logo"

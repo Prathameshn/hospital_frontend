@@ -1,18 +1,6 @@
 import { DoctorForm } from "@/components/DoctorModel";
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-
-export const fetchDoctors = createAsyncThunk(
-  "doctor/fetchDoctors",
-  async () => {
-    const response = await fetch("/api/doctors");
-
-    if (!response.ok) {
-      throw new Error("Failed to fetch doctors");
-    }
-
-    return response.json();
-  },
-);
+import { createSlice } from "@reduxjs/toolkit";
+import { fetchDoctors } from "../thunk";
 
 interface DoctorState {
   doctors: {

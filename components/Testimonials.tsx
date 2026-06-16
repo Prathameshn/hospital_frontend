@@ -21,19 +21,21 @@ export default function Testimonials() {
           Patient Reviews
         </h2>
 
-        <div className="grid md:grid-cols-3 gap-8">
-          {reviews.map((review) => (
-            <div
-              key={review.name}
-              className="bg-white rounded-2xl shadow-md p-6"
-            >
-              <div className="text-yellow-500 text-xl mb-3">⭐⭐⭐⭐⭐</div>
+        <div className="overflow-hidden">
+          <div className="flex gap-6 animate-scroll">
+            {[...reviews, ...reviews].map((review, index) => (
+              <div
+                key={index}
+                className="min-w-[300px] bg-white rounded-2xl shadow-md p-6"
+              >
+                <div className="text-yellow-500 text-xl mb-3">⭐⭐⭐⭐⭐</div>
 
-              <p className="text-gray-600 mb-4">"{review.review}"</p>
+                <p className="text-gray-600 mb-4">{review.review}</p>
 
-              <h4 className="font-bold">{review.name}</h4>
-            </div>
-          ))}
+                <h4 className="font-bold">{review.name}</h4>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </section>

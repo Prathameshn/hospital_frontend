@@ -3,7 +3,8 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { SetStateAction, useEffect, useState, useRef } from "react";
 import { useAppDispatch, useAppSelector } from "@/store/hook";
-import { fetchDoctors, setDoctor } from "@/store/slices/doctorSlice";
+import { setDoctor } from "@/store/slices/doctorSlice";
+import { fetchDoctors } from "@/store/thunk";
 import { DoctorForm } from "@/components/DoctorModel";
 
 export default function AppointmentPage() {

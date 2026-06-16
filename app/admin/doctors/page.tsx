@@ -2,12 +2,14 @@
 
 import { DoctorForm, DoctorModal } from "@/components/DoctorModel";
 import { useEffect, useState } from "react";
-import { fetchDoctors } from "@/store/slices/doctorSlice";
+import { fetchDoctors } from "@/store/thunk";
 import { useAppDispatch, useAppSelector } from "@/store/hook";
+import { useRouter } from "next/navigation";
 
 export default function DoctorsPage() {
   const [showModal, setShowModal] = useState(false);
   const dispatch = useAppDispatch();
+  const router = useRouter();
   const { doctors, loading, error } = useAppSelector((state) => state.doctor);
   const [selectedDoctor, setSelectedDoctor] = useState<DoctorForm | undefined>(
     undefined,
@@ -43,12 +45,20 @@ export default function DoctorsPage() {
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-3xl font-bold">Doctors</h1>
 
-        <button
-          onClick={() => setShowModal(true)}
-          className="bg-blue-600 text-white px-4 py-2 rounded-lg"
-        >
-          Create New
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => setShowModal(true)}
+            className="bg-blue-600 text-white px-4 py-2 rounded-lg"
+          >
+            Create New
+          </button>
+          <button
+            onClick={() => router.back()}
+            className="bg-gray-600 text-white px-4 py-2 rounded-lg"
+          >
+            Back
+          </button>
+        </div>
       </div>
 
       {/* Desktop Table */}
